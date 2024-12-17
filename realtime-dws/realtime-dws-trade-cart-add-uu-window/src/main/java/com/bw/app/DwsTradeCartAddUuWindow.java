@@ -41,11 +41,12 @@ public class DwsTradeCartAddUuWindow extends BaseApp {
         SingleOutputStreamOperator<JSONObject> etlStream = getEtlStream(streamSource);
         //添加水位线 分组聚合
         SingleOutputStreamOperator<CartAddUuBean> processStream = getProcessStream(etlStream);
+        //processStream.print();
         //开窗聚合
         SingleOutputStreamOperator<CartAddUuBean> reduceStream = getReduceStream(processStream);
         reduceStream.print();
         //写入doris
-       // reduceStream.map(new DorisMapFunction<>()).sinkTo(FlinkSinkUtil.getDorisSink(Constant.DWS_TRADE_CART_ADD_UU_WINDOW));
+        reduceStream.map(new DorisMapFunction<>()).sinkTo(FlinkSinkUtil.getDorisSink(Constant.DWS_TRADE_CART_ADD_UU_WINDOW));
     }
 
     /**
@@ -66,7 +67,7 @@ public class DwsTradeCartAddUuWindow extends BaseApp {
                     public void apply(TimeWindow timeWindow, Iterable<CartAddUuBean> iterable, Collector<CartAddUuBean> collector) throws Exception {
                         String s1 = DateFormatUtil.tsToDateTime(timeWindow.getStart());
                         String s2 = DateFormatUtil.tsToDateTime(timeWindow.getEnd());
-                        String s3 = DateFormatUtil.tsToDate(System.currentTimeMillis());
+                        String s3 = DateFormatUtil.tsToDate(new Date().getTime());
                         Iterator<CartAddUuBean> iterator = iterable.iterator();
                         while (iterator.hasNext()) {
                             CartAddUuBean next = iterator.next();

@@ -17,8 +17,9 @@ public class DwdTradeCartAdd extends BaseSqlApp {
         readOdsDb(tableEnv,groupId);
         //过滤数据
         Table table = getTable(tableEnv);
+       // table.execute().print();
         //建表
-        getTableResult(tableEnv);
+       getTableResult(tableEnv);
         //写入kafka
         table.insertInto(Constant.TOPIC_DWD_TRADE_CART_ADD).execute();
     }

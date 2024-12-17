@@ -6,7 +6,9 @@ import com.bw.base.BaseApp;
 import com.bw.bean.TradeTrademarkCategoryUserRefundBean;
 import com.bw.common.Constant;
 import com.bw.functions.Async;
+import com.bw.functions.DorisMapFunction;
 import com.bw.utils.DateFormatUtil;
+import com.bw.utils.FlinkSinkUtil;
 import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.FlatMapFunction;
@@ -102,7 +104,7 @@ public class DwsTradeTrademarkCategoryUserRefundWindowAsyCache extends BaseApp {
         SingleOutputStreamOperator<TradeTrademarkCategoryUserRefundBean> reduceStream = getReduceStream(mapStream);
         reduceStream.print();
 //        写入Doris
-//        reduceStream.map(new DorisMapFunction<>()).sinkTo(FlinkSinkUtil.getDorisSink(Constant.DWS_TRADE_TRADEMARK_CATEGORY_USER_REFUND_WINDOW));
+        reduceStream.map(new DorisMapFunction<>()).sinkTo(FlinkSinkUtil.getDorisSink(Constant.DWS_TRADE_TRADEMARK_CATEGORY_USER_REFUND_WINDOW));
     }
 
     /**

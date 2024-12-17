@@ -6,6 +6,7 @@ import com.bw.functions.KwSplit;
 import com.bw.utils.SQLUtil;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.Table;
+import org.apache.flink.table.api.TableResult;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 
 public class DwsTrafficSourceKeywordPageViewWindow extends BaseSqlApp {
@@ -14,19 +15,22 @@ public class DwsTrafficSourceKeywordPageViewWindow extends BaseSqlApp {
     }
     @Override
     public void handle(StreamExecutionEnvironment env, StreamTableEnvironment tableEnv, String groupId) {
-        //读取page表
+//        读取page表
         extracted(tableEnv);
-        //读取关键词
+
+//        读取关键词
         extracted1(tableEnv);
-        //创建自定义分词函数
+//        创建自定义分词函数
         tableEnv.createTemporaryFunction("kwSplit", KwSplit.class);
-        //炸开
+//        炸开
         extracted2(tableEnv);
-        //开窗
+//        开窗
         Table table = getTable(tableEnv);
-        //写到doris中
+//        table.execute().print();
+//        写到doris中
         extracted3(tableEnv);
-        table.insertInto(Constant.DWS_TRAFFIC_SOURCE_KEYWORD_PAGE_VIEW_WINDOW).execute();
+//        table.execute().print();
+      table.insertInto(Constant.DWS_TRAFFIC_SOURCE_KEYWORD_PAGE_VIEW_WINDOW).execute();
     }
 
     private static void extracted3(StreamTableEnvironment tableEnv) {
@@ -87,11 +91,11 @@ public class DwsTrafficSourceKeywordPageViewWindow extends BaseSqlApp {
      * @param tableEnv
      */
     private static void extracted(StreamTableEnvironment tableEnv) {
-        tableEnv.executeSql("create table page_log( " +
+         tableEnv.executeSql("create table page_log( " +
                 " page map<string,string>, " +
                 " ts bigint," +
                 " et as to_timestamp_ltz(ts, 3), " +
-                " watermark for et as et - interval '5' second ) "+
-                SQLUtil.getKafkaSourceSQL(Constant.TOPIC_DWD_TRAFFIC_PAGE,Constant.DWS_TRAFFIC_SOURCE_KEYWORD_PAGE_VIEW_WINDOW));
+                " watermark for et as et - interval '5' second ) " +
+                SQLUtil.getKafkaSourceSQL(Constant.TOPIC_DWD_TRAFFIC_PAGE, Constant.DWS_TRAFFIC_SOURCE_KEYWORD_PAGE_VIEW_WINDOW));
     }
 }

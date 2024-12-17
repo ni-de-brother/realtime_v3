@@ -44,7 +44,7 @@ public class DwsTradeOrderWindow extends BaseApp {
         SingleOutputStreamOperator<TradeOrderBean> reduceStream = getReduceStream(processStream);
         reduceStream.print();
         //写入Doris
-        //reduceStream.map(new DorisMapFunction<>()).sinkTo(FlinkSinkUtil.getDorisSink(Constant.DWS_TRADE_ORDER_WINDOW));
+        reduceStream.map(new DorisMapFunction<>()).sinkTo(FlinkSinkUtil.getDorisSink(Constant.DWS_TRADE_ORDER_WINDOW));
     }
     /**
      * 添加水位线 开窗 聚合

@@ -46,7 +46,7 @@ public class DwsTrafficHomeDetailPageViewWindow extends BaseApp {
         SingleOutputStreamOperator<TrafficHomeDetailPageViewBean> reduceStream = getReduceStream(processStream);
         reduceStream.print();
         //写到Doris
-       // reduceStream.map(new DorisMapFunction<>()).sinkTo(FlinkSinkUtil.getDorisSink(Constant.DWS_TRAFFIC_HOME_DETAIL_PAGE_VIEW_WINDOW));
+        reduceStream.map(new DorisMapFunction<>()).sinkTo(FlinkSinkUtil.getDorisSink(Constant.DWS_TRAFFIC_HOME_DETAIL_PAGE_VIEW_WINDOW));
     }
 
     private static SingleOutputStreamOperator<TrafficHomeDetailPageViewBean> getReduceStream(SingleOutputStreamOperator<TrafficHomeDetailPageViewBean> processStream) {

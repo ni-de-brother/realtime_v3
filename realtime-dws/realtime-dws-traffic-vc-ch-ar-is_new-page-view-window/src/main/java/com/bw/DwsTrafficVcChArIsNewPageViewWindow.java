@@ -38,13 +38,15 @@ public class DwsTrafficVcChArIsNewPageViewWindow extends BaseApp {
     public void handle(StreamExecutionEnvironment env, DataStreamSource<String> streamSource) {
         //数据清洗
         SingleOutputStreamOperator<JSONObject> etlStream = getEtlStream(streamSource);
+//        etlStream.print();
         //将数据转换为实体类 并添加水位线
         SingleOutputStreamOperator<TrafficPageViewBean> processStream = getProcessStream(etlStream);
+//        processStream.print();
         //根据维度分组聚合
         SingleOutputStreamOperator<TrafficPageViewBean> reduceStream = getReduceStream(processStream);
-        reduceStream.print();
+//        reduceStream.print();
         //写入Doris
-        //reduceStream.map(new DorisMapFunction<>()).sinkTo(FlinkSinkUtil.getDorisSink(Constant.DWS_TRAFFIC_VC_CH_AR_IS_NEW_PAGE_VIEW_WINDOW));
+        reduceStream.map(new DorisMapFunction<>()).sinkTo(FlinkSinkUtil.getDorisSink(Constant.DWS_TRAFFIC_VC_CH_AR_IS_NEW_PAGE_VIEW_WINDOW));
     }
 
     /**
@@ -70,7 +72,7 @@ public class DwsTrafficVcChArIsNewPageViewWindow extends BaseApp {
                             public void apply(String s, TimeWindow timeWindow, Iterable<TrafficPageViewBean> iterable, Collector<TrafficPageViewBean> collector) throws Exception {
                                 String s1 = DateFormatUtil.tsToDateTime(timeWindow.getStart());
                                 String s2 = DateFormatUtil.tsToDateTime(timeWindow.getEnd());
-                                String s3 = DateFormatUtil.tsToDate(new Date().getTime());
+                                String s3 = DateFormatUtil.tsToDate(System.currentTimeMillis());
                                 Iterator<TrafficPageViewBean> iterator = iterable.iterator();
                                 while (iterator.hasNext()) {
                                     TrafficPageViewBean next = iterator.next();
@@ -171,8 +173,9 @@ public class DwsTrafficVcChArIsNewPageViewWindow extends BaseApp {
                     JSONObject jsonObject = JSON.parseObject(s);
                     JSONObject common = jsonObject.getJSONObject("common");
                     String mid = common.getString("mid");
+                    String sid = common.getString("sid");
                     Long ts = jsonObject.getLong("ts");
-                    if (!mid.isEmpty() && ts > 0) {
+                    if (!mid.isEmpty() && ts > 0 && sid != null) {
                         collector.collect(jsonObject);
                     }
                 } catch (Exception e) {
