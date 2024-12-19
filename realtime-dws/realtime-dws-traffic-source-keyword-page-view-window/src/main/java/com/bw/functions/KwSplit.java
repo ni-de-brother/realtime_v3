@@ -14,6 +14,7 @@ public class KwSplit extends TableFunction<Row> {
         if (kw == null) {
             return;
         }
+
         // "华为手机白色手机"
         Set<String> keywords = IkUtil.split(kw);
         for (String keyword : keywords) {

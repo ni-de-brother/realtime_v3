@@ -30,7 +30,7 @@ public class DwsTrafficSourceKeywordPageViewWindow extends BaseSqlApp {
 //        写到doris中
         extracted3(tableEnv);
 //        table.execute().print();
-      table.insertInto(Constant.DWS_TRAFFIC_SOURCE_KEYWORD_PAGE_VIEW_WINDOW).execute();
+     table.insertInto(Constant.DWS_TRAFFIC_SOURCE_KEYWORD_PAGE_VIEW_WINDOW).execute();
     }
 
     private static void extracted3(StreamTableEnvironment tableEnv) {
@@ -70,6 +70,7 @@ public class DwsTrafficSourceKeywordPageViewWindow extends BaseSqlApp {
                 " from" +
                 " kw_table join lateral table(kwSplit(kw)) on true ");
         tableEnv.createTemporaryView("keyword_table", table);
+        tableEnv.sqlQuery("select * from keyword_table").execute().print();
     }
 
     /**
@@ -84,6 +85,7 @@ public class DwsTrafficSourceKeywordPageViewWindow extends BaseSqlApp {
                 " where page['last_page_id'] in ('search','home') " +
                 " and page['item_type']='keyword' and page['item'] is not null ");
         tableEnv.createTemporaryView("kw_table", table);
+        tableEnv.sqlQuery("select * from  kw_table").execute().print();
     }
 
     /**

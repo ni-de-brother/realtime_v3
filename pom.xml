@@ -21,6 +21,7 @@
         <module>realtime-dws/realtime-dws-traffic-source-keyword-page-view-window</module>
         <module>realtime-dws/realtime-dws-traffic-vc-ch-ar-is_new-page-view-window</module>
         <module>realtime-dws/realtime-dws-user-user-login-window</module>
+        <module>gmall-api</module>
     </modules>
 
 
